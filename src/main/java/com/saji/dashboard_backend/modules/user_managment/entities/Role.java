@@ -31,6 +31,9 @@ public class Role {
     @Column(nullable = false, length = 25)
     private String role;
 
+    @Column(columnDefinition = "INT")
+    private boolean enabled = true;
+
     @ManyToMany
     @JoinTable(name = "role_assignments", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users = new HashSet<>();

@@ -31,8 +31,9 @@ public class AuthService {
         SignInResponse response = new SignInResponse();
         response.setEmail(user.getEmail());
         response.setUsername(user.getUsername());
-        response.setUsername(token);
-
+        response.setToken(token);
+        response.setId(user.getId());
+        
         revokeAllUserTokens(user);
         saveUserToken(user, token);
 

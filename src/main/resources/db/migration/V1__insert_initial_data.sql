@@ -7,6 +7,7 @@ CREATE Table IF NOT EXISTS `sysusers` (
 
 CREATE Table IF NOT EXISTS `roles` (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    `enabled` TINYINT(1),
     role VARCHAR(25)
 );
 

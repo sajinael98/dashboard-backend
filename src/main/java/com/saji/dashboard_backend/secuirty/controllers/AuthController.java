@@ -1,7 +1,6 @@
 package com.saji.dashboard_backend.secuirty.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +19,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<SignInResponse> signIn() {
-        System.out.println("????????????");
-        return null;
+    public ResponseEntity<SignInResponse> signIn(@RequestBody SignInRequest req) {
+        var response = authService.signIn(req);
+        return ResponseEntity.ok().body(response);
     }
 }
