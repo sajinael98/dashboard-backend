@@ -1,7 +1,9 @@
 package com.saji.dashboard_backend.modules.user_managment.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,13 +19,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "tokens")
 public class Token {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String token;
-
+    @Column(name = "expired", columnDefinition = "INT")
     private boolean expired;
-
+    
+    @Column(name = "revoked", columnDefinition = "INT")
     private boolean revoked;
 
     @ManyToOne

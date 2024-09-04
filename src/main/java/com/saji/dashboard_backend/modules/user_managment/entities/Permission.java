@@ -21,13 +21,17 @@ public class Permission {
 
     @Column(nullable = false)
     private String entity;
-
+    
+    @Column(name = "create", columnDefinition = "INT")
     private boolean create;
 
+    @Column(name = "read", columnDefinition = "INT")
     private boolean read;
 
+    @Column(name = "edit", columnDefinition = "INT")
     private boolean edit;
 
+    @Column(name = "delete", columnDefinition = "INT")
     private boolean delete;
 
     @ManyToOne

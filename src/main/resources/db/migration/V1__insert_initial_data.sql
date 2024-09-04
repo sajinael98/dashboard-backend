@@ -19,10 +19,10 @@ CREATE Table IF NOT EXISTS `role_assignments`(
 CREATE Table IF NOT EXISTS `permissions`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     entity VARCHAR(25),
-    `create` int,
-    `read` int,
-    `edit` int,
-    `delete` int,
+    `create` TINYINT(1),
+    `read` TINYINT(1),
+    `edit` TINYINT(1),
+    `delete` TINYINT(1),
     role_id BIGINT,
     FOREIGN KEY (role_id) REFERENCES `roles`(id)
 );
@@ -30,8 +30,8 @@ CREATE Table IF NOT EXISTS `permissions`(
 CREATE Table IF NOT EXISTS `tokens`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     token TEXT,
-    expired int,
-    revoked int,
+    expired TINYINT(1),
+    revoked TINYINT(1),
     user_id BIGINT,
     FOREIGN KEY (user_id) REFERENCES `sysusers`(id)
 );
