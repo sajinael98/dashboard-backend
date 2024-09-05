@@ -3,9 +3,12 @@ package com.saji.dashboard_backend.modules.user_managment.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.saji.dashboard_backend.shared.entites.BaseEntity;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,11 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "roles")
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class Role extends BaseEntity {
     @Column(nullable = false, length = 25)
     private String role;
 
