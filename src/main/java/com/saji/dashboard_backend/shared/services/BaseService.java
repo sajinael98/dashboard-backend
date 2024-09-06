@@ -22,31 +22,32 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class BaseService<T extends BaseEntity> {
+public class BaseService<T extends BaseEntity> {
     private final BaseRepository<T, Long> baseRepository;
     private final BaseMapper<T> baseMapper;
 
     @Transactional
-    public BaseResponse create(BaseRequest request) {
+    public <X extends BaseResponse> X create(BaseRequest request) {
         T object = baseMapper.convertRequestToEntity(request);
         validate(object);
         object = baseRepository.save(object);
         T savedObject = baseRepository.findById(object.getId()).get();
-        return baseMapper.convertEntityToResponse(savedObject);
+        return (X) baseMapper.convertEntityToResponse(savedObject);
     }
 
     @Transactional
-    public BaseResponse update(Long id, BaseRequest request) {
+    public <X extends BaseResponse> X  update(Long id, BaseRequest request) {
         if (!baseRepository.existsById(id)) {
 
         }
         T object = baseMapper.convertRequestToEntity(request);
+        object.setId(id);
         validate(object);
         object = baseRepository.save(object);
-        return baseMapper.convertEntityToResponse(object);
+        return (X) baseMapper.convertEntityToResponse(object);
     }
 
-    public ListResponse<? extends BaseResponse> getList(PaginationFilter paginationFilter,
+    public <X extends BaseResponse> ListResponse<X> getList(PaginationFilter paginationFilter,
             Collection<ValueFilter> valueFilters) {
         Pageable pageable = PageRequest.of(paginationFilter.getPage() - 1,
                 paginationFilter.getSize());
@@ -56,13 +57,13 @@ public abstract class BaseService<T extends BaseEntity> {
         ListResponse<BaseResponse> response = new ListResponse<>();
         response.setData(list);
         response.setTotal(entities.getTotalElements());
-        return response;
+        return (ListResponse<X>) response;
     }
 
-    public BaseResponse getById(Long id) {
+    public <X extends BaseResponse> X  getById(Long id) {
         var entity = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(""));
         BaseResponse response = baseMapper.convertEntityToResponse(entity);
-        return response;
+        return (X) response;
     }
 
     public void deleteById(Long id) {
