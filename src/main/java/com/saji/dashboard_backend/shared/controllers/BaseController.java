@@ -4,6 +4,12 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.saji.dashboard_backend.shared.dtos.BaseRequest;
@@ -19,22 +25,27 @@ import com.saji.dashboard_backend.shared.utils.PaginationFilterExtractor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class BaseController<T extends BaseEntity> {
-    private final BaseService<T> service;
+public class BaseController<Entity extends BaseEntity, Request extends BaseRequest, Response extends BaseResponse> {
+    private final BaseService<Entity, Request, Response> service;
 
-    public <X extends BaseResponse> ResponseEntity<X> create(BaseRequest request) {
+    @PostMapping
+    public ResponseEntity<Response> create(@RequestBody Request request) {
         return ResponseEntity.ok().body(service.create(request));
     }
 
-    public <X extends BaseResponse> ResponseEntity<X> update(Long id, BaseRequest request) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<Response> update(@PathVariable Long id,
+            @RequestBody Request request) {
         return ResponseEntity.ok().body(service.update(id, request));
     }
 
-    public <X extends BaseResponse> ResponseEntity<X> getById(Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Response> getById(@PathVariable Long id) {
         return ResponseEntity.ok().body(service.getById(id));
     }
 
-    public <X extends BaseResponse> ResponseEntity<ListResponse<X>> getList(@RequestParam Map<String, Object> params) {
+    @GetMapping
+    public ResponseEntity<ListResponse<Response>> getList(@RequestParam Map<String, Object> params) {
         PaginationFilterExtractor paginationFilterExtractor = new PaginationFilterExtractor();
         PaginationFilter paginationFilter = paginationFilterExtractor.getFilters(params);
         if (paginationFilter.getPage() == null) {
@@ -51,7 +62,7 @@ public class BaseController<T extends BaseEntity> {
 
         FieldFilterExtractor fieldFilterExtractor = new FieldFilterExtractor();
         Collection<ValueFilter> valueFilters = fieldFilterExtractor.getFilters(params);
-        ListResponse<X> response = service.getList(paginationFilter, valueFilters);
+        ListResponse<Response> response = service.getList(paginationFilter, valueFilters);
 
         // headers.set("Access-Control-Expose-Headers", "X-Total-Count");
         // headers.set("x-total-count", "" + response.getTotal());
@@ -59,7 +70,8 @@ public class BaseController<T extends BaseEntity> {
         return ResponseEntity.ok().body(response);
     }
 
-    public ResponseEntity<Void> deleteById(Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }

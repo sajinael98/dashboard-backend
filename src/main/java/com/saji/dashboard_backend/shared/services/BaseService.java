@@ -22,48 +22,49 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class BaseService<T extends BaseEntity> {
-    private final BaseRepository<T, Long> baseRepository;
-    private final BaseMapper<T> baseMapper;
+public class BaseService<Entity extends BaseEntity, Request extends BaseRequest, Response extends BaseResponse> {
+    private final BaseRepository<Entity, Long> baseRepository;
+    private final BaseMapper<Entity> baseMapper;
 
     @Transactional
-    public <X extends BaseResponse> X create(BaseRequest request) {
-        T object = baseMapper.convertRequestToEntity(request);
+    public Response create(Request request) {
+        Entity object = baseMapper.convertRequestToEntity(request);
         validate(object);
         object = baseRepository.save(object);
-        T savedObject = baseRepository.findById(object.getId()).get();
-        return (X) baseMapper.convertEntityToResponse(savedObject);
+        Entity savedObject = baseRepository.findById(object.getId()).get();
+        return (Response) baseMapper.convertEntityToResponse(savedObject);
     }
 
     @Transactional
-    public <X extends BaseResponse> X  update(Long id, BaseRequest request) {
+    public Response update(Long id, Request request) {
         if (!baseRepository.existsById(id)) {
 
         }
-        T object = baseMapper.convertRequestToEntity(request);
+        Entity object = baseMapper.convertRequestToEntity(request);
         object.setId(id);
         validate(object);
         object = baseRepository.save(object);
-        return (X) baseMapper.convertEntityToResponse(object);
+        return (Response) baseMapper.convertEntityToResponse(object);
     }
 
-    public <X extends BaseResponse> ListResponse<X> getList(PaginationFilter paginationFilter,
+    public ListResponse<Response> getList(PaginationFilter paginationFilter,
             Collection<ValueFilter> valueFilters) {
         Pageable pageable = PageRequest.of(paginationFilter.getPage() - 1,
                 paginationFilter.getSize());
-        Page<T> entities = baseRepository.findAll(EntitySpecification.findList(valueFilters), pageable);
-        List<BaseResponse> list = entities.stream().map(entity -> baseMapper.convertEntityToResponse(entity))
+        Page<Entity> entities = baseRepository.findAll(EntitySpecification.findList(valueFilters), pageable);
+        List<Response> list = (List<Response>) entities.stream()
+                .map(entity -> baseMapper.convertEntityToResponse(entity))
                 .toList();
-        ListResponse<BaseResponse> response = new ListResponse<>();
+        ListResponse<Response> response = new ListResponse<>();
         response.setData(list);
         response.setTotal(entities.getTotalElements());
-        return (ListResponse<X>) response;
+        return response;
     }
 
-    public <X extends BaseResponse> X  getById(Long id) {
+    public Response getById(Long id) {
         var entity = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(""));
-        BaseResponse response = baseMapper.convertEntityToResponse(entity);
-        return (X) response;
+        Response response = (Response) baseMapper.convertEntityToResponse(entity);
+        return response;
     }
 
     public void deleteById(Long id) {
@@ -73,7 +74,7 @@ public class BaseService<T extends BaseEntity> {
         baseRepository.deleteById(id);
     }
 
-    public void validate(T object) {
+    public void validate(Entity object) {
 
     }
 }
