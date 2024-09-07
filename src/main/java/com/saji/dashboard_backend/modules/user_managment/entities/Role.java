@@ -1,6 +1,8 @@
 package com.saji.dashboard_backend.modules.user_managment.entities;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.saji.dashboard_backend.shared.entites.BaseEntity;
@@ -8,6 +10,7 @@ import com.saji.dashboard_backend.shared.entites.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -33,6 +36,6 @@ public class Role extends BaseEntity {
     @JoinTable(name = "role_assignments", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> users = new HashSet<>();
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Permission> permissions = new HashSet<>();
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Permission> permissions = new ArrayList<>();
 }

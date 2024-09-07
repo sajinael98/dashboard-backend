@@ -20,10 +20,10 @@ CREATE Table IF NOT EXISTS `role_assignments`(
 CREATE Table IF NOT EXISTS `permissions`(
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     entity VARCHAR(25),
-    `create` TINYINT(1),
-    `read` TINYINT(1),
-    `edit` TINYINT(1),
-    `delete` TINYINT(1),
+    `createR` TINYINT(1),
+    `readR` TINYINT(1),
+    `editR` TINYINT(1),
+    `deleteR` TINYINT(1),
     role_id BIGINT,
     FOREIGN KEY (role_id) REFERENCES `roles`(id)
 );

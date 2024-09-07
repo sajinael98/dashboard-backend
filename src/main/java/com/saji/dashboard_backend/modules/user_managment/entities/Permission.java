@@ -1,8 +1,10 @@
 package com.saji.dashboard_backend.modules.user_managment.entities;
 
+import com.saji.dashboard_backend.shared.entites.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -15,26 +17,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "permissions")
-public class Permission {
-    @Id
-    private Long id;
-
+public class Permission extends BaseEntity{
     @Column(nullable = false)
     private String entity;
     
-    @Column(name = "create", columnDefinition = "INT")
-    private boolean create;
+    @Column(columnDefinition = "INT")
+    private boolean createR;
 
-    @Column(name = "read", columnDefinition = "INT")
-    private boolean read;
+    @Column(columnDefinition = "INT")
+    private boolean readR;
 
-    @Column(name = "edit", columnDefinition = "INT")
-    private boolean edit;
+    @Column(columnDefinition = "INT")
+    private boolean editR;
 
-    @Column(name = "delete", columnDefinition = "INT")
-    private boolean delete;
+    @Column(columnDefinition = "INT")
+    private boolean deleteR;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
 }
