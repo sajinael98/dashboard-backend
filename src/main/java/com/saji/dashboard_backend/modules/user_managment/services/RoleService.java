@@ -1,5 +1,6 @@
 package com.saji.dashboard_backend.modules.user_managment.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import com.saji.dashboard_backend.modules.user_managment.entities.Permission;
 import com.saji.dashboard_backend.modules.user_managment.entities.Role;
 import com.saji.dashboard_backend.modules.user_managment.mappers.PermissionMapper;
 import com.saji.dashboard_backend.modules.user_managment.mappers.RoleMapper;
+import com.saji.dashboard_backend.modules.user_managment.repositories.PermissionRepo;
 import com.saji.dashboard_backend.modules.user_managment.repositories.RoleRepo;
 import com.saji.dashboard_backend.shared.dtos.ListResponse;
 import com.saji.dashboard_backend.shared.services.BaseService;
@@ -23,11 +25,14 @@ import jakarta.persistence.EntityNotFoundException;
 public class RoleService extends BaseService<Role, RoleDto, RoleResponse> {
     private RoleRepo roleRepo;
     private PermissionMapper permissionMapper;
+    private PermissionRepo permissionRepo;
 
-    public RoleService(RoleRepo roleRepo, RoleMapper roleMapper, PermissionMapper permissionMapper) {
+    public RoleService(RoleRepo roleRepo, RoleMapper roleMapper, PermissionMapper permissionMapper,
+            PermissionRepo permissionRepo) {
         super(roleRepo, roleMapper);
         this.roleRepo = roleRepo;
         this.permissionMapper = permissionMapper;
+        this.permissionRepo = permissionRepo;
     }
 
     public ListResponse<PermissionResponse> createPermission(Long roleId, PermissionDto permissionDto) {
@@ -44,10 +49,9 @@ public class RoleService extends BaseService<Role, RoleDto, RoleResponse> {
 
     public ListResponse<PermissionResponse> deletePermission(Long roleId, Long permissionId) {
         Role role = getRoleById(roleId);
-        List<Permission> permissions = role.getPermissions().stream().filter(p -> p.getId() != permissionId).toList();
-        role.setPermissions(permissions);
-        validate(role);
-        roleRepo.save(role);
+        role.getPermissions().removeIf(p -> p.getId() == permissionId);
+        permissionRepo.deleteById(permissionId);
+        // roleRepo.save(role);
         return prepaListResponse(role);
     }
 
