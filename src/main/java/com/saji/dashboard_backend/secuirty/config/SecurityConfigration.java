@@ -28,7 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfigration {
         // no need to add /api/**
         private final static String[] WHITELIST_URL = {
-                        "/sys-auth/**"
+                        "/sys-auth/**",
+                        "/**"
         };
 
         private final JwtAuthenticationFilter jwtAuthFilter;

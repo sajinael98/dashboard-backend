@@ -1,9 +1,6 @@
 package com.saji.dashboard_backend.modules.user_managment.controllers;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,10 +37,5 @@ public class RoleController extends BaseController<Role, RoleDto, RoleResponse> 
     @RequestBody PermissionDto request) {
         System.out.println(request);
         return ResponseEntity.ok().body(roleService.createPermission(id, request));
-    }
-
-    @DeleteMapping("/{role-id}/permissions/{permission-id}")
-    public ResponseEntity<ListResponse<PermissionResponse>> deletePermission(@PathVariable(name = "role-id") Long roleId, @PathVariable(name = "permission-id") Long permissionId) {
-        return ResponseEntity.ok().body(roleService.deletePermission(roleId, permissionId));
     }
 }
