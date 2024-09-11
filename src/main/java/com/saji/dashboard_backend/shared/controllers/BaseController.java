@@ -22,6 +22,7 @@ import com.saji.dashboard_backend.shared.services.BaseService;
 import com.saji.dashboard_backend.shared.utils.FieldFilterExtractor;
 import com.saji.dashboard_backend.shared.utils.PaginationFilterExtractor;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,13 +30,13 @@ public class BaseController<Entity extends BaseEntity, Request extends BaseReque
     private final BaseService<Entity, Request, Response> service;
 
     @PostMapping
-    public ResponseEntity<Response> create(@RequestBody Request request) {
+    public ResponseEntity<Response> create(@Valid @RequestBody Request request) {
         return ResponseEntity.ok().body(service.create(request));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<Response> update(@PathVariable Long id,
-            @RequestBody Request request) {
+            @Valid @RequestBody Request request) {
         return ResponseEntity.ok().body(service.update(id, request));
     }
 

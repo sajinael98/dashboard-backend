@@ -1,6 +1,8 @@
 CREATE Table IF NOT EXISTS `sysusers` (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    email TEXT,
+    first_Name VARCHAR(25),
+    last_Name VARCHAR(25),
+    email VARCHAR(255) UNIQUE,
     password TEXT,
     username TEXT
 );
