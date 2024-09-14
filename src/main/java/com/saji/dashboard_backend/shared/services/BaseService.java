@@ -1,5 +1,6 @@
 package com.saji.dashboard_backend.shared.services;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,10 +26,12 @@ import lombok.RequiredArgsConstructor;
 public class BaseService<Entity extends BaseEntity, Request extends BaseRequest, Response extends BaseResponse> {
     private final BaseRepository<Entity, Long> baseRepository;
     private final BaseMapper<Entity> baseMapper;
+    private final Class<Entity> clazz;
 
     @Transactional
-    public Response create(Request request) {
-        Entity object = baseMapper.convertRequestToEntity(request);
+    public Response create(Request request) throws InstantiationException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+        Entity object = baseMapper.convertRequestToEntity(clazz.getDeclaredConstructor().newInstance(), request);
         validate(object);
         object = baseRepository.save(object);
         Entity savedObject = baseRepository.findById(object.getId()).get();
@@ -37,10 +40,9 @@ public class BaseService<Entity extends BaseEntity, Request extends BaseRequest,
 
     @Transactional
     public Response update(Long id, Request request) {
-        if (!baseRepository.existsById(id)) {
-
-        }
-        Entity object = baseMapper.convertRequestToEntity(request);
+        var requiredEntity = baseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("resoure is not found."));
+        Entity object = baseMapper.convertRequestToEntity(requiredEntity, request);
         object.setId(id);
         validate(object);
         object = baseRepository.save(object);

@@ -1,5 +1,6 @@
 package com.saji.dashboard_backend.shared.controllers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class BaseController<Entity extends BaseEntity, Request extends BaseReque
     private final BaseService<Entity, Request, Response> service;
 
     @PostMapping
-    public ResponseEntity<Response> create(@Valid @RequestBody Request request) {
+    public ResponseEntity<Response> create(@Valid @RequestBody Request request) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         return ResponseEntity.ok().body(service.create(request));
     }
 

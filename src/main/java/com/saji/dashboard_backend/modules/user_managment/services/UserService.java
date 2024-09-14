@@ -24,7 +24,7 @@ public class UserService extends BaseService<User, UserDto, UserDto> {
     private RoleRepo roleRepo;
 
     public UserService(UserRepo userRepo, UserMapper userMapper, RoleRepo roleRepo) {
-        super(userRepo, userMapper);
+        super(userRepo, userMapper, User.class);
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
     }
@@ -72,7 +72,8 @@ public class UserService extends BaseService<User, UserDto, UserDto> {
                 throw new IllegalArgumentException("email: " + object.getEmail() + " is already taken.");
             }
         } else {
-            if (userRepo.findIdByEmail(object.getEmail()) != object.getId()) {
+            var tempId = userRepo.findIdByEmail(object.getEmail());
+            if (tempId != null && tempId != object.getId()) {
                 throw new IllegalArgumentException("email: " + object.getEmail() + " is already taken.");
             }
         }

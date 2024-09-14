@@ -51,8 +51,8 @@ public class User extends BaseEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRole().toUpperCase()));
-            authorities.addAll(role.getGrantedAuthorities());
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRole().toUpperCase().replaceAll(" ", "_")));
+            authorities.addAll(role.getgrantedAuthorities());
         }
         return authorities;
     }

@@ -1,6 +1,5 @@
 package com.saji.dashboard_backend.modules.user_managment.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,7 @@ public class RoleService extends BaseService<Role, RoleDto, RoleResponse> {
 
     public RoleService(RoleRepo roleRepo, RoleMapper roleMapper, PermissionMapper permissionMapper,
             PermissionRepo permissionRepo) {
-        super(roleRepo, roleMapper);
+        super(roleRepo, roleMapper, Role.class);
         this.roleRepo = roleRepo;
         this.permissionMapper = permissionMapper;
         this.permissionRepo = permissionRepo;
@@ -37,7 +36,7 @@ public class RoleService extends BaseService<Role, RoleDto, RoleResponse> {
 
     public ListResponse<PermissionResponse> createPermission(Long roleId, PermissionDto permissionDto) {
         Role role = getRoleById(roleId);
-        Permission permission = permissionMapper.convertRequestToEntity(permissionDto);
+        Permission permission = permissionMapper.convertRequestToEntity(new Permission(), permissionDto);
         permission.setRole(role);
         List<Permission> permissions = role.getPermissions();
         permissions.add(permission);
@@ -51,7 +50,7 @@ public class RoleService extends BaseService<Role, RoleDto, RoleResponse> {
         Role role = getRoleById(roleId);
         role.getPermissions().removeIf(p -> p.getId() == permissionId);
         permissionRepo.deleteById(permissionId);
-        // roleRepo.save(role);
+        roleRepo.save(role);
         return prepaListResponse(role);
     }
 

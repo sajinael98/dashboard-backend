@@ -8,4 +8,17 @@ public class PermissionUtils {
         return user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(permission));
     }
 
+    public static String customizePermission(String entity, String action) {
+        final String pattern = "%s_%s";
+        switch (action) {
+            case "create":
+            case "read":
+            case "update":
+            case "delete":
+                return String.format(pattern, action.toUpperCase(), entity.toUpperCase());
+            default:
+                throw new IllegalArgumentException("Invalid Permission");
+        }
+    }
+
 }

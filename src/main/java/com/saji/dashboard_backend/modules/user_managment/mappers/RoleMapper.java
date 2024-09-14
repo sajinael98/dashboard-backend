@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.saji.dashboard_backend.modules.user_managment.dtos.RoleResponse;
 import com.saji.dashboard_backend.modules.user_managment.entities.Role;
-import com.saji.dashboard_backend.shared.dtos.BaseRequest;
 import com.saji.dashboard_backend.shared.mappers.BaseMapper;
 
 @Service
@@ -17,12 +16,4 @@ public class RoleMapper implements BaseMapper<Role> {
         BeanUtils.copyProperties(entity, res);
         return res;
     }
-
-    @Override
-    public Role convertRequestToEntity(BaseRequest req) {
-        Role role = new Role();
-        BeanUtils.copyProperties(req, role);
-        return role;
-    }
-
 }
