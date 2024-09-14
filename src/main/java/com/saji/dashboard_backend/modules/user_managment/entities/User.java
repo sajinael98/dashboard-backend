@@ -1,18 +1,23 @@
 package com.saji.dashboard_backend.modules.user_managment.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.saji.dashboard_backend.shared.entites.BaseEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -25,10 +30,10 @@ import lombok.NoArgsConstructor;
 public class User extends BaseEntity implements UserDetails {
     @Column(name = "first_name")
     private String firstName;
-    
+
     @Column(name = "last_name")
     private String lastName;
-    
+
     @Column(nullable = false)
     private String username;
 
@@ -38,12 +43,18 @@ public class User extends BaseEntity implements UserDetails {
     @Column
     private String password;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-    private Set<Role> roles = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "role_assignments", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private List<Role> roles = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRole().toUpperCase()));
+            authorities.addAll(role.getGrantedAuthorities());
+        }
+        return authorities;
     }
 
     @Override
@@ -76,7 +87,7 @@ public class User extends BaseEntity implements UserDetails {
         this.password = password;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 
@@ -90,5 +101,9 @@ public class User extends BaseEntity implements UserDetails {
 
     public String getEmail() {
         return email;
-    }    
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
 }

@@ -1,9 +1,9 @@
 package com.saji.dashboard_backend.modules.user_managment.entities;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.saji.dashboard_backend.shared.entites.BaseEntity;
 
@@ -11,8 +11,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -32,10 +30,28 @@ public class Role extends BaseEntity {
     @Column(columnDefinition = "INT")
     private boolean enabled = true;
 
-    @ManyToMany
-    @JoinTable(name = "role_assignments", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users = new HashSet<>();
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users = new ArrayList<>();
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Permission> permissions = new ArrayList<>();
+
+    public List<SimpleGrantedAuthority> getGrantedAuthorities() {
+        List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
+        for (Permission p : permissions) {
+            if (p.isCreateR()) {
+                grantedAuthorities.add(new SimpleGrantedAuthority("CREATE_" + p.getEntity().toUpperCase()));
+            }
+            if (p.isReadR()) {
+                grantedAuthorities.add(new SimpleGrantedAuthority("READ_" + p.getEntity().toUpperCase()));
+            }
+            if (p.isEditR()) {
+                grantedAuthorities.add(new SimpleGrantedAuthority("EDIT_" + p.getEntity().toUpperCase()));
+            }
+            if (p.isDeleteR()) {
+                grantedAuthorities.add(new SimpleGrantedAuthority("DELETE_" + p.getEntity().toUpperCase()));
+            }
+        }
+        return grantedAuthorities;
+    }
 }
