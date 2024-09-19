@@ -38,3 +38,11 @@ CREATE Table IF NOT EXISTS `tokens`(
     user_id BIGINT,
     FOREIGN KEY (user_id) REFERENCES `sysusers`(id)
 );
+
+CREATE TABLE files (
+    id SERIAL PRIMARY KEY,
+    file_name VARCHAR(255) NOT NULL UNIQUE,
+    file_type VARCHAR(50) NOT NULL,
+    file_size BIGINT NOT NULL,
+    upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

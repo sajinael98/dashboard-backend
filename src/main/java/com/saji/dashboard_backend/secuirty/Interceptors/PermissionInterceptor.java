@@ -1,5 +1,6 @@
 package com.saji.dashboard_backend.secuirty.Interceptors;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class PermissionInterceptor implements HandlerInterceptor {
+    private final String[] WHITELIST_URL;
+
     private final List<String> ACTIONS;
 
     private final Map<String, String> allowedMethods;
@@ -32,6 +35,8 @@ public class PermissionInterceptor implements HandlerInterceptor {
     private UserRepo userRepo;
 
     public PermissionInterceptor() {
+        WHITELIST_URL = new String[] { "/sys-auth", "/files" };
+
         ACTIONS = List.of("create", "read", "update", "delete");
 
         allowedMethods = new HashMap<>();
@@ -45,7 +50,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/sys-auth/")) {
+        if (Arrays.stream(WHITELIST_URL).anyMatch(uri -> requestURI.startsWith(uri))) {
             return true;
         }
 
@@ -64,7 +69,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             return false;
         }
-        
+
         if (user.getId() == 1) {
             return true;
         }

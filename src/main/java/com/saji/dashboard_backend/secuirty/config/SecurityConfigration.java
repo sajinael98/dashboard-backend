@@ -31,7 +31,7 @@ public class SecurityConfigration {
         // no need to add /api/**
         private final static String[] WHITELIST_URL = {
                         "/sys-auth/**",
-                        "/**"
+                        "/files/**"
         };
 
         private final JwtAuthenticationFilter jwtAuthFilter;
